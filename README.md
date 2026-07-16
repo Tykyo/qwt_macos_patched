@@ -69,41 +69,104 @@ codesign --force -s - qwt.framework
 
 This is sufficient for local development.
 
-## Using the patched framework
+## Using the patched framework from a custom location
 
-The generated framework can be linked normally from a Qt application.
+The Qwt framework does not have to be installed in the Qt directory. It can also be stored in a project-specific location.
 
-For debug builds, simply copy the framework into:
+Example:
+
+```qmake
+LIB_DIR = path/to/qwt/lib
+
+LIBS += -F$$LIB_DIR -framework qwt
+QMAKE_LFLAGS += -Wl,-F$$LIB_DIR -Wl,-framework,qwt
+```
+
+When using a custom framework location, `macdeployqt6` may not automatically copy the Qwt framework into the application bundle.
+
+In that case, copy it manually:
 
 ```text
-MyApplication.app/Contents/Frameworks
+MyApplication.app
+└── Contents
+    └── Frameworks
+        └── qwt.framework
 ```
 
-For release builds, `macdeployqt6` can bundle the framework correctly once the install name has been patched.
+```qmake
+FRAMEWORKS_DIR = $$OUT_PWD/$${TARGET}.app/Contents/Frameworks
 
-## Installing the framework
+QMAKE_POST_LINK += mkdir -p "$$FRAMEWORKS_DIR" $$escape_expand(\\n\\t)
 
-The generated framework can be installed in the standard macOS framework location:
-
-```bash
-sudo cp -R qwt.framework /Library/Frameworks/
+QMAKE_POST_LINK += rsync -a \
+    "$$LIB_DIR/qwt.framework" \
+    "$$FRAMEWORKS_DIR/" \
+    $$escape_expand(\\n\\t)
 ```
 
-Qt Creator and qmake can then find it automatically, allowing multiple projects to share the same Qwt installation.
-
-When building a release application, `macdeployqt6` will automatically copy the framework into the application bundle.
-
-## Why patch the framework?
-
-Without the `install_name_tool` fix, applications may fail to locate `qwt.framework` after it has been deployed inside an application bundle.
-
-The patched framework uses:
+and make sure the application uses:
 
 ```text
 @rpath/qwt.framework/Versions/6/qwt
 ```
 
-which is the recommended form for frameworks embedded in macOS applications.
+as the framework install name.
+
+## Installing the framework
+
+The generated framework should be installed in a location where Qt/qmake can find it.
+
+A convenient location is the Qt installation directory:
+
+```text
+<Qt>/lib/qwt.framework
+```
+
+For example:
+
+```bash
+cp -R qwt.framework ~/Qt/6.10.3/macos/lib/
+```
+
+Do not rely on `/Library/Frameworks` for Qt projects. While macOS supports this location, qmake does not automatically add it to the framework search paths.
+
+## Using the framework in a qmake project
+
+Add the Qwt framework to your `.pro` file:
+
+```qmake
+INCLUDEPATH += "$$[QT_INSTALL_LIBS]/qwt.framework/Headers"
+
+LIBS += -framework qwt
+QMAKE_LFLAGS += -Wl,-framework,qwt
+```
+
+This allows qmake to locate the framework using the same Qt installation that is used to build the application.
+
+## Why the framework is patched
+
+The generated Qwt framework uses a non-standard install name:
+
+```text
+qwt.framework/Versions/6/qwt
+```
+
+The patch changes it to:
+
+```text
+@rpath/qwt.framework/Versions/6/qwt
+```
+
+which allows Qt applications bundled as `.app` files to locate the framework correctly.
+
+During deployment, `macdeployqt6` can then copy the framework into:
+
+```text
+MyApplication.app/Contents/Frameworks
+```
+
+with the correct runtime paths.
+
 
 ## Tested with
 
