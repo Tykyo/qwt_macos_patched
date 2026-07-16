@@ -16,3 +16,4 @@ macx {
 
     QMAKE_EXTRA_TARGETS += deploy
 }
+
