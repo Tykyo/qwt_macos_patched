@@ -4,6 +4,32 @@ This repository provides a small qmake project that builds **Qwt 6.2.0** and app
 
 The original Qwt sources are **not modified**. The framework is patched only after it has been built.
 
+## How to clone this repository
+
+This repository contains the original **Qwt** source code as a Git submodule.
+
+To clone everything in a single step, use:
+
+```bash
+git clone --recurse-submodules https://github.com/Tykyo/qwt_macos_patched.git
+```
+
+If you have already cloned the repository without the submodule, initialize it afterwards with:
+
+```bash
+git submodule update --init --recursive
+```
+
+The project layout should then look like:
+
+```text
+qwt_macos_patched/
+├── qwt/          # Original Qwt repository (Git submodule)
+├── qwt_patch/
+├── script/
+└── qwt_macos_patched.pro
+```
+
 ## Why is this needed?
 
 When Qwt 6.2.0 is built as a macOS framework, its install name is generated as:
@@ -130,6 +156,38 @@ cp -R qwt.framework ~/Qt/6.10.3/macos/lib/
 
 Do not rely on `/Library/Frameworks` for Qt projects. While macOS supports this location, qmake does not automatically add it to the framework search paths.
 
+## Installing the framework into a Qt installation
+
+The project provides a custom **`deploy`** target.
+
+Running:
+
+```bash
+make deploy
+```
+
+installs the generated `qwt.framework` into the current Qt installation:
+
+```text
+$$[QT_INSTALL_LIBS]
+```
+
+This allows all projects using the same Qt installation to locate Qwt automatically.
+
+### Using Qt Creator
+
+The `deploy` target can be integrated directly into Qt Creator.
+
+Open your project's **Deploy Settings** and add a new **Deploy Step**:
+
+* **Step:** `Make`
+* **Arguments:** `deploy`
+
+You can then install the framework simply by selecting **Deploy** from the project's context menu in Qt Creator.
+
+This approach keeps one Qwt framework per Qt installation, ensuring that each Qt version uses the Qwt framework built against that same Qt version.
+
+
 ## Using the framework in a qmake project
 
 Add the Qwt framework to your `.pro` file:
@@ -171,7 +229,7 @@ with the correct runtime paths.
 ## Tested with
 
 * Qwt 6.2.0
-* Qt 6.10.x
+* Qt 6.10.x, 6.11.x, 6.12.x
 * macOS (Apple Silicon)
 
 ## License
