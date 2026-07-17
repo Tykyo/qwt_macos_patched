@@ -7,6 +7,7 @@ SUBDIRS += \
 
 patch_qwt.depends = qwt
 
+# Deploy target
 macx {
     deploy.depends = $$SUBDIRS
 
@@ -16,4 +17,3 @@ macx {
 
     QMAKE_EXTRA_TARGETS += deploy
 }
-
