@@ -33,7 +33,10 @@ jobs:
         run: |
           mkdir build
           cd build
-          qmake ../qwt_macos_patched.pro
+          qmake ../qwt_macos_patched.pro \
+            QMAKE_CFLAGS+="-Wno-implicit-function-declaration" \
+            QMAKE_CXXFLAGS+="-Wno-implicit-function-declaration" \
+            QMAKE_OBJECTIVE_CFLAGS+="-Wno-implicit-function-declaration"
           make -j$(sysctl -n hw.ncpu)
 
       - name: Create framework zip
