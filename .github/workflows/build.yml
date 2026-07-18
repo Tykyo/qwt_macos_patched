@@ -31,7 +31,7 @@ jobs:
 
       - name: Patch qyieldcpu.h (bug __yield on recent Xcode)
         run: |
-          QT_HEADER=$(find "$HOME/work/qwt_macos_patched/Qt/${{ matrix.qt-version }}" -name qyieldcpu.h -path "*/Versions/A/Headers/*")
+          QT_HEADER=$(find "$RUNNER_WORKSPACE/Qt/${{ matrix.qt-version }}" -name qyieldcpu.h -path "*/Versions/A/Headers/*")
           if [ -n "$QT_HEADER" ] && grep -q '#if __has_builtin(__yield)' "$QT_HEADER"; then
             perl -i -pe 's/#if __has_builtin\(__yield\)/#if __has_builtin(__builtin_arm_yield)\n    __builtin_arm_yield();\n#elif __has_builtin(__yield)/' "$QT_HEADER"
             echo "Patched: $QT_HEADER"
