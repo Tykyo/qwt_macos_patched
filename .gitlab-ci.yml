@@ -11,9 +11,10 @@ workflow:
 default:
   tags:
     - macos
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
-    QT_INSTALL_ROOT: "$CI_PROJECT_DIR/.qt"
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  QT_INSTALL_ROOT: "$CI_PROJECT_DIR/.qt"
 
 build:
   stage: build
