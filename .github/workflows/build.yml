@@ -1,0 +1,64 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        qt-version: ['6.10.3', '6.11.1', '6.12.0']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Qt ${{ matrix.qt-version }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ matrix.qt-version }}
+          host: 'mac'
+          target: 'desktop'
+          arch: 'clang_64'
+          cache: true
+
+      - name: Build avec qmake
+        run: |
+          mkdir build
+          cd build
+          qmake ../qwt_macos_patched.pro
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Create framework zip
+        run: |
+          cd build/qwt/lib
+          zip -r -y qwt-macos-qt${{ matrix.qt-version }}.zip *.framework
+
+      - name: Upload as artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qwt-macos-qt${{ matrix.qt-version }}
+          path: build/qwt/lib/*.zip
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.zip
+          generate_release_notes: true
