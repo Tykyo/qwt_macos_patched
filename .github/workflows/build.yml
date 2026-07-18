@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -52,7 +52,7 @@ jobs:
           zip -r -y qwt-macos-qt${{ matrix.qt-version }}.zip *.framework
 
       - name: Upload as artefact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qwt-macos-qt${{ matrix.qt-version }}
           path: build/qwt/lib/*.zip
@@ -65,7 +65,7 @@ jobs:
       contents: write
     steps:
       - name: Download all artefacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
 
