@@ -39,7 +39,7 @@ build:
 
     - mkdir -p build
     - cd build
-    - qmake ../qwt_macos_patched.pro
+    - qmake ../qwt_macos_patched.pro "CONFIG+=release" "CONFIG-=debug"
     - make -j"$(sysctl -n hw.ncpu)"
 
     - cd qwt/lib
