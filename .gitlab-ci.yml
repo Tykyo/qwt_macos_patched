@@ -23,6 +23,18 @@ build:
     matrix:
       - QT_VERSION: ["6.11.1", "6.12.0"]
 
+  before_script:
+    # Install aqt if necessary
+    - |
+      if ! python3 -c "import aqt" 2>/dev/null; then
+        echo "Installing aqtinstall..."
+        python3 -m pip install --user aqtinstall
+      else
+        echo "aqtinstall is already installed"
+      fi
+
+    - python3 -m aqt version 2>/dev/null
+
   script:
     # Install Qt only if it is not already available.
     - |

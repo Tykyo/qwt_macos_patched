@@ -13,11 +13,11 @@ IDENTITY=$(security find-identity -v -p codesigning \
     | awk '{print $2}')
 
 if [ -z "$IDENTITY" ]; then
-    echo "No valid codesign identity found for $_FILTER"
+    echo "Codesign - No valid codesign identity found for $_FILTER"
     IDENTITY='-'
 fi
 
-echo "Using identity: $IDENTITY"
+echo "Codesign - Using identity: $IDENTITY"
 
 FRAMEWORKS="${APP}/Contents/Frameworks"
 
@@ -35,3 +35,4 @@ codesign --force \
     -s "$IDENTITY" \
     "$APP"
 
+codesign --verify --deep --strict --verbose=2 "$APP"
