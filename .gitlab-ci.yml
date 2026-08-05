@@ -7,6 +7,8 @@ workflow:
     - if: '$CI_PIPELINE_SOURCE == "web"'
     - if: '$CI_COMMIT_TAG =~ /^v/'
     - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "qwt-6.2.0-patched"'
+    - if: '$CI_COMMIT_BRANCH == "qwt-6.3.0-patched"'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 default:
@@ -55,10 +57,10 @@ build:
     - make -j"$(sysctl -n hw.ncpu)"
 
     - cd qwt/lib
-    - zip -r -y "qwt-macos-qt${QT_VERSION}.zip" *.framework
+    - zip -r -y "qwt-macos-${CI_COMMIT_REF_SLUG}-qt${QT_VERSION}.zip" *.framework
 
   artifacts:
-    name: "qwt-macos-qt${QT_VERSION}-${CI_COMMIT_SHORT_SHA}"
+    name: "qwt-macos-${CI_COMMIT_REF_SLUG}-qt${QT_VERSION}-${CI_COMMIT_SHORT_SHA}"
     paths:
       - build/qwt/lib/*.zip
     expire_in: 30 days

@@ -2,10 +2,16 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - qwt-6.2.0-patched
+      - qwt-6.3.0-patched
     tags: [ 'v*' ]
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - qwt-6.2.0-patched
+      - qwt-6.3.0-patched
 
 jobs:
   build:
@@ -49,12 +55,12 @@ jobs:
       - name: Create framework zip
         run: |
           cd build/qwt/lib
-          zip -r -y qwt-macos-qt${{ matrix.qt-version }}.zip *.framework
+          zip -r -y qwt-macos-${{ github.ref_name }}-qt${{ matrix.qt-version }}.zip *.framework
 
       - name: Upload as artefact
         uses: actions/upload-artifact@v7
         with:
-          name: qwt-macos-qt${{ matrix.qt-version }}
+          name: qwt-macos-${{ github.ref_name }}-qt${{ matrix.qt-version }}
           path: build/qwt/lib/*.zip
 
   release:
