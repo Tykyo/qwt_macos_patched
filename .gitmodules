@@ -1,3 +1,4 @@
 [submodule "qwt"]
 	path = qwt
-	url = https://github.com/opencor/qwt.git
+	url = https://git.code.sf.net/p/qwt/git
+	branch = qwt-6.3
