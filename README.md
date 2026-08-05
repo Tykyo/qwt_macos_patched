@@ -1,6 +1,6 @@
-# Qwt 6.2.0 macOS Patched Build
+# Qwt 6.3.0 macOS Patched Build
 
-This repository provides a small qmake project that builds **Qwt 6.2.0** and applies the macOS fixes required to use the generated framework inside a Qt application bundle.
+This repository provides a small qmake project that builds **Qwt 6.3.0** and applies the macOS fixes required to use the generated framework inside a Qt application bundle.
 
 The original Qwt sources are **not modified**. The framework is patched only after it has been built.
 
@@ -32,7 +32,7 @@ qwt_macos_patched/
 
 ## Why is this needed?
 
-When Qwt 6.2.0 is built as a macOS framework, its install name is generated as:
+When Qwt 6.3.0 is built as a macOS framework, its install name is generated as:
 
 ```text
 qwt.framework/Versions/6/qwt
@@ -228,7 +228,7 @@ with the correct runtime paths.
 
 ## Tested with
 
-* Qwt 6.2.0
+* Qwt 6.3.0
 * Qt 6.10.x, 6.11.x, 6.12.x
 * macOS (Apple Silicon)
 
